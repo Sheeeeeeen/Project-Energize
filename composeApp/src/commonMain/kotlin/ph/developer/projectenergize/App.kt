@@ -30,15 +30,15 @@ fun App() {
             firstVisibleMonth = currentMonth,
             firstDayOfWeek = daysOfWeek.first()
         )
-        Column {
-            DaysOfWeekTitle(daysOfWeek = daysOfWeek) // Use the title here
-            HorizontalCalendar(
-                state = state,
-                dayContent = {
-                    Day(it)
-                }
-            )
-        }
+        HorizontalCalendar(
+            state = state,
+            dayContent = {
+                Day(it)
+            },
+            monthHeader = { month ->
+                DaysOfWeekTitle(daysOfWeek = month.weekDays.first().map { it.date.dayOfWeek }) // Use the title here
+            }
+        )
     }
 }
 
