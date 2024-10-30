@@ -17,6 +17,9 @@ import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.*
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun Calendar() {
@@ -74,4 +77,37 @@ private fun DaysOfWeekTitleComponent(daysOfWeek: List<DayOfWeek>) {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun DayPreview() {
+    DayComponent(
+        CalendarDay(
+            date = LocalDate(year = 2024, month = Month.FEBRUARY, dayOfMonth = 23),
+            position = DayPosition.MonthDate
+        )
+    )
+}
+
+@Preview
+@Composable
+private fun DayOfWeekPreview() {
+    DaysOfWeekTitleComponent(
+        daysOfWeek = listOf(
+            DayOfWeek.MONDAY,
+            DayOfWeek.TUESDAY,
+            DayOfWeek.WEDNESDAY,
+            DayOfWeek.THURSDAY,
+            DayOfWeek.FRIDAY,
+            DayOfWeek.SATURDAY,
+            DayOfWeek.SUNDAY,
+        )
+    )
+}
+
+@Preview
+@Composable
+private fun CalendarPreview() {
+    CalendarComponent(state = rememberCalendarState())
 }
