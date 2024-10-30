@@ -1,11 +1,16 @@
 package ph.developer.projectenergize
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -36,7 +41,9 @@ fun App() {
                 Day(it)
             },
             monthHeader = { month ->
-                DaysOfWeekTitle(daysOfWeek = month.weekDays.first().map { it.date.dayOfWeek }) // Use the title here
+                val data = month.weekDays.first().map { it.date.dayOfWeek }
+                print(data)
+                DaysOfWeekTitle(daysOfWeek = data) // Use the title here
             }
         )
     }
@@ -45,11 +52,13 @@ fun App() {
 @Composable
 fun Day(day: CalendarDay) {
     Box(
-        modifier = Modifier
-            .aspectRatio(1f), // This is important for square sizing!
+        modifier = Modifier.aspectRatio(1f),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = day.date.dayOfMonth.toString())
+        Text(
+            text = day.date.dayOfMonth.toString(),
+            color = if (day.position == DayPosition.MonthDate) Color.Black else Color.Gray
+        )
     }
 }
 
