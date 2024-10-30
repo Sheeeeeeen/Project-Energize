@@ -11,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +23,7 @@ import com.kizitonwose.calendar.compose.CalendarState
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.*
+import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
@@ -30,11 +32,15 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun Calendar() {
 
+    val scope = rememberCoroutineScope()
+
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     val daysOfWeek = remember { daysOfWeek() }
+
+    var currentMonthIndex = 0
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -43,19 +49,31 @@ fun Calendar() {
         firstDayOfWeek = daysOfWeek.first()
     )
 
-    CalendarComponent(state = state)
+    CalendarComponent(
+        state = state,
+        onBackward = {
+            scope.launch {
+                state.animateScrollToMonth(month = YearMonth(year = currentMonth.year, month = Month(it - 1)))
+            }
+        },
+        onForward = {
+            scope.launch {
+                state.animateScrollToMonth(month = YearMonth(year = currentMonth.year, month = Month(it + 1)))
+            }
+        }
+    )
 }
 
 @Composable
 private fun CalendarComponent(
     modifier: Modifier = Modifier,
     state: CalendarState,
-    onBackward: () -> Unit = {},
-    onForward: () -> Unit = {}
+    onBackward: (currentMonth: Int) -> Unit = {},
+    onForward: (currentMonth: Int) -> Unit = {}
 ) {
     Column {
         Row(modifier = Modifier) {
-            IconButton(onClick = onBackward) {
+            IconButton(onClick = { onBackward(state.firstVisibleMonth.yearMonth.monthNumber) }) {
                 Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Arrow Back")
             }
             Text(
@@ -64,7 +82,7 @@ private fun CalendarComponent(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h6
             )
-            IconButton(onClick = onBackward) {
+            IconButton(onClick = { onForward(state.firstVisibleMonth.yearMonth.monthNumber) }) {
                 Icon(Icons.AutoMirrored.Default.ArrowForward, contentDescription = "Arrow Forward")
             }
         }
@@ -78,7 +96,6 @@ private fun CalendarComponent(
             }
         )
     }
-
 }
 
 @Composable
