@@ -1,17 +1,23 @@
 package ph.developer.projectenergize
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.kizitonwose.calendar.compose.CalendarState
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -41,16 +47,38 @@ fun Calendar() {
 }
 
 @Composable
-private fun CalendarComponent(modifier: Modifier = Modifier, state: CalendarState) {
-    HorizontalCalendar(
-        modifier = modifier,
-        state = state,
-        dayContent = { DayComponent(it) },
-        monthHeader = { month ->
-            val dayOfWeek = month.weekDays.first().map { it.date.dayOfWeek }
-            DaysOfWeekTitleComponent(daysOfWeek = dayOfWeek)
+private fun CalendarComponent(
+    modifier: Modifier = Modifier,
+    state: CalendarState,
+    onBackward: () -> Unit = {},
+    onForward: () -> Unit = {}
+) {
+    Column {
+        Row(modifier = Modifier) {
+            IconButton(onClick = onBackward) {
+                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Arrow Back")
+            }
+            Text(
+                modifier = Modifier.weight(1f).padding(vertical = 16.dp),
+                text = state.firstVisibleMonth.yearMonth.month.name,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.h6
+            )
+            IconButton(onClick = onBackward) {
+                Icon(Icons.AutoMirrored.Default.ArrowForward, contentDescription = "Arrow Forward")
+            }
         }
-    )
+        HorizontalCalendar(
+            modifier = modifier,
+            state = state,
+            dayContent = { DayComponent(it) },
+            monthHeader = { month ->
+                val dayOfWeek = month.weekDays.first().map { it.date.dayOfWeek }
+                DaysOfWeekTitleComponent(daysOfWeek = dayOfWeek)
+            }
+        )
+    }
+
 }
 
 @Composable
