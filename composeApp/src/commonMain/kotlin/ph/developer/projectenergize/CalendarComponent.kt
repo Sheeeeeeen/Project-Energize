@@ -53,12 +53,14 @@ fun Calendar() {
         state = state,
         onBackward = {
             scope.launch {
-                state.animateScrollToMonth(month = YearMonth(year = currentMonth.year, month = Month(it - 1)))
+                val ym = it
+                state.animateScrollToMonth(month = YearMonth(year = state.firstVisibleMonth.yearMonth.year, month = Month(ym.monthNumber - 1)))
+                println(state.firstVisibleMonth.yearMonth.year.toString())
             }
         },
         onForward = {
             scope.launch {
-                state.animateScrollToMonth(month = YearMonth(year = currentMonth.year, month = Month(it + 1)))
+//                state.animateScrollToMonth(month = YearMonth(year = currentMonth.year, month = Month(it + 1)))
             }
         }
     )
@@ -68,21 +70,26 @@ fun Calendar() {
 private fun CalendarComponent(
     modifier: Modifier = Modifier,
     state: CalendarState,
-    onBackward: (currentMonth: Int) -> Unit = {},
-    onForward: (currentMonth: Int) -> Unit = {}
+    onBackward: (yearMonth: YearMonth) -> Unit = {},
+    onForward: (yearMonth: YearMonth) -> Unit = {}
 ) {
     Column {
+        
+        val month = state.firstVisibleMonth.yearMonth.month.name
+        val year = state.firstVisibleMonth.yearMonth.year.toString()
+        val monthYear = "$month $year"
+
         Row(modifier = Modifier) {
-            IconButton(onClick = { onBackward(state.firstVisibleMonth.yearMonth.monthNumber) }) {
+            IconButton(onClick = { onBackward(state.firstVisibleMonth.yearMonth) }) {
                 Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Arrow Back")
             }
             Text(
                 modifier = Modifier.weight(1f).padding(vertical = 16.dp),
-                text = state.firstVisibleMonth.yearMonth.month.name,
+                text = monthYear,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h6
             )
-            IconButton(onClick = { onForward(state.firstVisibleMonth.yearMonth.monthNumber) }) {
+            IconButton(onClick = { onForward(state.firstVisibleMonth.yearMonth) }) {
                 Icon(Icons.AutoMirrored.Default.ArrowForward, contentDescription = "Arrow Forward")
             }
         }
