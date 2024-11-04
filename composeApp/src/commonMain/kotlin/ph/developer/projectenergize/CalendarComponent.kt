@@ -24,6 +24,7 @@ import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
@@ -37,10 +38,7 @@ fun Calendar() {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
-    val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     val daysOfWeek = remember { daysOfWeek() }
-
-    var currentMonthIndex = 0
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -53,14 +51,13 @@ fun Calendar() {
         state = state,
         onBackward = {
             scope.launch {
-                val ym = it
-                state.animateScrollToMonth(month = YearMonth(year = state.firstVisibleMonth.yearMonth.year, month = Month(ym.monthNumber - 1)))
+                state.animateScrollToMonth(month = it.minus(value = 1, unit = DateTimeUnit.MONTH))
                 println(state.firstVisibleMonth.yearMonth.year.toString())
             }
         },
         onForward = {
             scope.launch {
-//                state.animateScrollToMonth(month = YearMonth(year = currentMonth.year, month = Month(it + 1)))
+                state.animateScrollToMonth(month = it.plus(value = 1, unit = DateTimeUnit.MONTH))
             }
         }
     )
@@ -74,7 +71,7 @@ private fun CalendarComponent(
     onForward: (yearMonth: YearMonth) -> Unit = {}
 ) {
     Column {
-        
+
         val month = state.firstVisibleMonth.yearMonth.month.name
         val year = state.firstVisibleMonth.yearMonth.year.toString()
         val monthYear = "$month $year"
