@@ -91,8 +91,8 @@ private fun CalendarComponent(
             modifier = modifier,
             state = state,
             dayContent = { DayComponent(it) },
-            monthHeader = { month ->
-                val dayOfWeek = month.weekDays.first().map { it.date.dayOfWeek }
+            monthHeader = { calendarMonth ->
+                val dayOfWeek = calendarMonth.weekDays.first().map { it.date.dayOfWeek }
                 DaysOfWeekTitleComponent(daysOfWeek = dayOfWeek)
             }
         )
