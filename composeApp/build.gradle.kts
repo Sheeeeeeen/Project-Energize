@@ -43,7 +43,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(projects.shared)
+
             implementation(libs.calendar)
+            implementation(libs.kermit)
         }
     }
 }

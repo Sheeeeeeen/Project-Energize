@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import co.touchlab.kermit.Logger
 import com.kizitonwose.calendar.compose.CalendarState
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -49,8 +50,8 @@ fun Calendar(scope: CoroutineScope = rememberCoroutineScope()) {
         onBackward = {
             scope.launch {
                 state.animateScrollToMonth(month = it.minus(value = 1, unit = DateTimeUnit.MONTH))
-                println(state.firstVisibleMonth.yearMonth.year.toString())
-            }
+                Logger.setTag("Calendar Component")
+                Logger.d(message = { state.firstVisibleMonth.yearMonth.year.toString() })}
         },
         onForward = {
             scope.launch {
