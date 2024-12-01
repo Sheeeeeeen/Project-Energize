@@ -6,9 +6,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
@@ -28,37 +27,41 @@ import kotlinx.datetime.Month
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun Calendar(
-    modifier: Modifier = Modifier,
-    content: @Composable (CalendarDay) -> Unit,
-    scope: CoroutineScope = rememberCoroutineScope()
-) {
+fun rememberCalendarStateWithYearMonth(): CalendarState {
 
     val currentMonth = remember { YearMonth.now() }
-    val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
-    val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
+    val startMonth = remember { currentMonth.minusMonths(100) }
+    val endMonth = remember { currentMonth.plusMonths(100) }
     val daysOfWeek = remember { daysOfWeek() }
 
-    val state = rememberCalendarState(
+    return rememberCalendarState(
         startMonth = startMonth,
         endMonth = endMonth,
         firstVisibleMonth = currentMonth,
         firstDayOfWeek = daysOfWeek.first()
     )
+}
 
+@Composable
+fun Calendar(
+    modifier: Modifier = Modifier,
+    content: @Composable (CalendarDay) -> Unit,
+    scope: CoroutineScope = rememberCoroutineScope(),
+    calendarState: CalendarState = rememberCalendarStateWithYearMonth()
+) {
     CalendarComponent(
         modifier = modifier,
-        state = state,
+        state = calendarState,
         onBackward = {
             scope.launch {
-                state.animateScrollToMonth(month = it.minus(value = 1, unit = DateTimeUnit.MONTH))
+                calendarState.animateScrollToMonth(month = it.minus(value = 1, unit = DateTimeUnit.MONTH))
                 Logger.setTag("Calendar Component")
-                Logger.d(message = { state.firstVisibleMonth.yearMonth.year.toString() })
+                Logger.d(message = { calendarState.firstVisibleMonth.yearMonth.year.toString() })
             }
         },
         onForward = {
             scope.launch {
-                state.animateScrollToMonth(month = it.plus(value = 1, unit = DateTimeUnit.MONTH))
+                calendarState.animateScrollToMonth(month = it.plus(value = 1, unit = DateTimeUnit.MONTH))
             }
         },
         content = content
@@ -77,12 +80,12 @@ private fun CalendarComponent(
 
     var selectedDay by remember { mutableStateOf(currentDay) }
 
-    Column(modifier = modifier) {
-        val month = state.firstVisibleMonth.yearMonth.month.name
-        val year = state.firstVisibleMonth.yearMonth.year.toString()
-        val monthYear = "$month $year"
+    val month = state.firstVisibleMonth.yearMonth.month.name
+    val year = state.firstVisibleMonth.yearMonth.year.toString()
+    val monthYear = "$month $year"
 
-        Row(modifier = Modifier) {
+    Column(modifier = modifier) {
+        Row {
             IconButton(onClick = { onBackward(state.firstVisibleMonth.yearMonth) }) {
                 Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Arrow Back")
             }
@@ -102,7 +105,7 @@ private fun CalendarComponent(
             dayContent = {
                 DayComponent(
                     day = it,
-                    isCurrentDate = { currentDay == it }
+                    isCurrentDate = { selectedDay == it }
                 ) { day ->
                     selectedDay = day
                 }
