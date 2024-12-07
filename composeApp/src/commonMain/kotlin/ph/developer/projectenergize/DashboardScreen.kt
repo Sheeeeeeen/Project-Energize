@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +20,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import ph.developer.projectenergize.dialog.AddNewMemberDialog
+import ph.developer.projectenergize.dialog.MemberListDialog
 
 @Composable
 fun DashboardScreen() {
@@ -40,6 +43,8 @@ private fun DashboardContent(modifier: Modifier = Modifier) {
 
     var showAddMemberScreen by remember { mutableStateOf(false) }
 
+    var showMemberListDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -49,9 +54,16 @@ private fun DashboardContent(modifier: Modifier = Modifier) {
                     text = "TRX Class",
                     style = MaterialTheme.typography.h6
                 )
-                IconButton(modifier = Modifier, onClick = {
-                    showAddMemberScreen = showAddMemberScreen.not()
-                }) {
+                IconButton(
+                    modifier = Modifier,
+                    onClick = { showMemberListDialog = showMemberListDialog.not() }
+                ) {
+                    Icon(Icons.Filled.Person, contentDescription = "Arrow Forward")
+                }
+                IconButton(
+                    modifier = Modifier,
+                    onClick = { showAddMemberScreen = showAddMemberScreen.not() }
+                ) {
                     Icon(Icons.Filled.Add, contentDescription = "Arrow Forward")
                 }
             }
@@ -67,8 +79,28 @@ private fun DashboardContent(modifier: Modifier = Modifier) {
                         onDismissRequest = { showAddMemberScreen = false }
                     ) {
                         Surface(modifier = Modifier.fillMaxSize()) {
-                            Text("Dialog!", modifier = Modifier.clickable { showAddMemberScreen = false })
+                            AddNewMemberDialog(
+                                onBack = {
+                                    showAddMemberScreen = false
+                                },
+                                onSave = {
+                                    showAddMemberScreen = false
+                                }
+                            )
                         }
+                    }
+                }
+
+                if (showMemberListDialog) {
+                    Dialog(
+                        properties = DialogProperties(usePlatformDefaultWidth = false),
+                        onDismissRequest = { showMemberListDialog = false }
+                    ) {
+                        MemberListDialog(
+                            onBack = {
+                                showMemberListDialog = false
+                            },
+                        )
                     }
                 }
 
