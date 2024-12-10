@@ -1,8 +1,7 @@
-package ph.developer.projectenergize
+package ph.developer.projectenergize.dashboard
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -20,6 +19,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import ph.developer.projectenergize.Calendar
 import ph.developer.projectenergize.dialog.AddNewMemberDialog
 import ph.developer.projectenergize.dialog.MemberListDialog
 
